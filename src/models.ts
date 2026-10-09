@@ -169,4 +169,8 @@ export const OPENAI_CODEX_MODELS: readonly Model<'openai-codex-responses'>[] = [
     ...BASE_MODEL, id: 'gpt-5.6-terra', name: 'GPT-5.6 Terra', input: ['text', 'image'], contextWindow: 272_000,
     thinkingLevelMap: { minimal: 'low', low: 'low', medium: 'medium', high: 'high', xhigh: 'xhigh', max: 'max' },
   },
+  {
+    ...BASE_MODEL, id: 'gpt-6-astra', name: 'GPT-6 Astra', input: ['text', 'image'], contextWindow: 1_050_000,
+    thinkingLevelMap: { minimal: 'low', low: 'low', medium: 'medium', high: 'high', xhigh: 'xhigh', max: 'max' },
+  },
 ]

@@ -20,7 +20,7 @@ Sign in to ChatGPT from DeepSeek Harness and use available Codex models without 
 
 ## Requirements
 
-- DeepSeek Harness `0.1.0-rc.8`
+- DeepSeek Harness `0.1.7-rc.2`
 - Node.js `^22.19.0` or `>=24.0.0`
 - `pnpm` on `PATH`
 - A ChatGPT account with Codex access
@@ -87,12 +87,23 @@ Restart DSH after installing, updating, or removing the plugin. Login, logout, a
 
 Sign out in **Settings → OpenAI OAuth** before uninstalling if the stored credential should also be deleted. Uninstalling the package otherwise preserves it.
 
+## Development checks
+
+```sh
+pnpm install --frozen-lockfile
+pnpm run check
+```
+
+`check` validates types, regenerates the committed build artifacts, and runs regression tests without real credentials or API requests. Tests cover `role: "tool"` results, tool-call IDs, HTTP error classification, and the model catalog.
+
+Development dependencies and CI target DSH `0.1.7-rc.2`. The rc.8 tool-result blocks and `CallId` API are no longer supported.
+
 ## Notes
 
 - This connects a ChatGPT account to the Codex model provider; it does not create an OpenAI API key.
 - The Web integration supports only a local DSH Host bound to `127.0.0.1`.
 - Credentials are stored unencrypted at `$DSH_HOME/plugins/dsh-openai-oauth/credentials.json`.
-- Model availability and quota depend on the signed-in account.
+- The catalog includes `gpt-6-astra`; actual model availability and quota depend on the signed-in account. A catalog entry does not grant access.
 - OpenAI may change the Codex OAuth protocol independently of this plugin.
 - This is an unofficial community project and is not affiliated with or endorsed by OpenAI or DeepSeek AI.
 

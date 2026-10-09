@@ -187,7 +187,10 @@ function httpFailure(status: number): LlmError {
   }
   if (status === 429) return new LlmError('OpenAI Codex rate limit reached. Retry later.', 'RATE_LIMIT')
   if (status === 408 || status === 504) return new LlmError('OpenAI Codex request timed out.', 'TIMEOUT')
-  return new LlmError('OpenAI Codex request failed.', 'CODEX_ERROR')
+  if (status >= 500 && status < 600) return new LlmError(`OpenAI Codex server error (HTTP ${status}).`, 'SERVER')
+  if (status === 400 || status === 422) return new LlmError(`OpenAI Codex rejected the request (HTTP ${status}).`, 'CODEX_ERROR')
+  if (status === 404) return new LlmError(`OpenAI Codex endpoint not found (HTTP ${status}).`, 'CODEX_ERROR')
+  return new LlmError(`OpenAI Codex request failed (HTTP ${status}).`, 'CODEX_ERROR')
 }
 
 async function* sse(response: Response, signal?: AbortSignal): AsyncGenerator<Record<string, unknown>> {

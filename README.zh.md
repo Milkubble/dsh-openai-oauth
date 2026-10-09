@@ -20,7 +20,7 @@
 
 ## 准备 DSH
 
-- DeepSeek Harness `0.1.0-rc.8`
+- DeepSeek Harness `0.1.7-rc.2`
 - Node.js `^22.19.0` 或 `>=24.0.0`
 - `pnpm` 已加入 `PATH`
 - 当前具有 Codex 使用资格的 ChatGPT 账号
@@ -87,12 +87,23 @@ dsh plugin --profile web remove dsh-openai-oauth
 
 如果还要删除保存的凭据，请在卸载前前往**设置 → OpenAI OAuth**退出登录；否则卸载会保留凭据。
 
+## 开发验证
+
+```sh
+pnpm install --frozen-lockfile
+pnpm run check
+```
+
+`check` 会检查类型、重新生成随仓库提交的构建产物，并运行无需真实凭据或网络请求的回归测试。测试覆盖 `role: "tool"` 工具结果、工具调用 ID、HTTP 错误分类和模型目录。
+
+开发依赖和 CI 验证目标均为 DSH `0.1.7-rc.2`，不再兼容 rc.8 的工具结果块或 `CallId` API。
+
 ## 说明
 
 - 本插件把 ChatGPT 账号连接到 Codex 模型提供方，不会生成 OpenAI API Key。
 - Web 集成只支持绑定到 `127.0.0.1` 的本地 DSH Host。
 - 凭据以未加密文件保存在 `$DSH_HOME/plugins/dsh-openai-oauth/credentials.json`。
-- 可用模型和额度取决于已登录的账号。
+- 模型目录包含 `gpt-6-astra`；实际可用模型和额度取决于已登录的账号，出现在列表中不代表账号一定有权限。
 - OpenAI 可能独立修改 Codex OAuth 协议。
 - 本项目为非官方社区项目，与 OpenAI、DeepSeek AI 无隶属或背书关系。
 
