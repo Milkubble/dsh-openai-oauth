@@ -20,7 +20,7 @@
 
 ## 准备 DSH
 
-- DeepSeek Harness `0.1.7-rc.2`
+- DeepSeek Harness `0.1.7-rc.2` 或 `0.2.0-rc.2`
 - Node.js `^22.19.0` 或 `>=24.0.0`
 - `pnpm` 已加入 `PATH`
 - 当前具有 Codex 使用资格的 ChatGPT 账号
@@ -96,7 +96,7 @@ pnpm run check
 
 `check` 会检查类型、重新生成随仓库提交的构建产物，并运行无需真实凭据或网络请求的回归测试。测试覆盖 `role: "tool"` 工具结果、工具调用 ID、HTTP 错误分类和模型目录。
 
-开发依赖和 CI 验证目标均为 DSH `0.1.7-rc.2`，不再兼容 rc.8 的工具结果块或 `CallId` API。
+开发依赖和 CI 验证目标均为 DSH `0.2.0-rc.2`，不再兼容 rc.8 的工具结果块或 `CallId` API。
 
 ## 说明
 

@@ -20,7 +20,7 @@ Sign in to ChatGPT from DeepSeek Harness and use available Codex models without 
 
 ## Requirements
 
-- DeepSeek Harness `0.1.7-rc.2`
+- DeepSeek Harness `0.1.7-rc.2` or `0.2.0-rc.2`
 - Node.js `^22.19.0` or `>=24.0.0`
 - `pnpm` on `PATH`
 - A ChatGPT account with Codex access
@@ -96,7 +96,7 @@ pnpm run check
 
 `check` validates types, regenerates the committed build artifacts, and runs regression tests without real credentials or API requests. Tests cover `role: "tool"` results, tool-call IDs, HTTP error classification, and the model catalog.
 
-Development dependencies and CI target DSH `0.1.7-rc.2`. The rc.8 tool-result blocks and `CallId` API are no longer supported.
+Development dependencies and CI target DSH `0.2.0-rc.2`. The rc.8 tool-result blocks and `CallId` API are no longer supported.
 
 ## Notes
 
