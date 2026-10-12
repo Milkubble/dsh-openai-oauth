@@ -177,3 +177,50 @@ test('published entry imports on the current host API', async () => {
   assert.equal(typeof entry.apply, 'function')
   assert.equal(typeof entry.OpenAiCodexAdapter, 'function')
 })
+test('resolveModel exposes the context window and the default output cap', async () => {
+  const adapter = adapterWith(async () => done())
+  const resolved = await adapter.resolveModel(provider, 'gpt-6.1-sol')
+  assert.equal(resolved.context.contextWindow, 1_050_000)
+  assert.equal(resolved.defaultMaxTokens, 128_000)
+  const builtIn = await adapter.resolveModel(provider, 'gpt-6-astra')
+  assert.equal(builtIn.defaultMaxTokens, 128_000)
+})
+
+test('a requested maxTokens reaches the Responses body as max_output_tokens', async () => {
+  let body
+  const adapter = adapterWith(async (_url, init) => { body = JSON.parse(init.body); return done() })
+  await collect(adapter.stream({ ...options([]), maxTokens: 4_096 }))
+  assert.equal(body.max_output_tokens, 4_096)
+  await collect(adapter.stream(options([])))
+  assert.equal('max_output_tokens' in body, false)
+})
+
+test('a stored overlay resolves a built-in override and a custom model', async () => {
+  let body
+  const overlay = { list: () => [
+    { id: 'gpt-6.1-sol', contextWindow: 400_000, maxTokens: 32_000 },
+    { id: 'custom-sol', name: 'Custom Sol', contextWindow: 500_000, maxTokens: 64_000 },
+  ] }
+  const models = new CodexModels(store, {
+    store: overlay,
+    fetch: async (_url, init) => { body = JSON.parse(init.body); return done() },
+    refresh: async () => { throw new Error('Unexpected refresh') },
+  })
+  const adapter = new OpenAiCodexAdapter(models)
+  assert.deepEqual(models.getModels(provider).map(entry => entry.id).slice(-1), ['custom-sol'])
+  assert.equal(models.getModel('foreign-provider', 'custom-sol'), undefined)
+  const listed = await adapter.listModels(provider)
+  assert.ok(listed.some(entry => entry.id === 'custom-sol'))
+  const overridden = await adapter.resolveModel(provider, 'gpt-6.1-sol')
+  assert.equal(overridden.context.contextWindow, 400_000)
+  assert.equal(overridden.defaultMaxTokens, 32_000)
+  const custom = await adapter.resolveModel(provider, 'custom-sol')
+  assert.equal(custom.name, 'Custom Sol')
+  assert.equal(custom.context.contextWindow, 500_000)
+  assert.equal(custom.defaultMaxTokens, 64_000)
+  assert.deepEqual(custom.inputModalities, ['text', 'image'])
+  await collect(adapter.stream({ provider, model: 'custom-sol', messages: [] }))
+  assert.equal(body.model, 'custom-sol')
+  assert.equal('max_output_tokens' in body, false)
+})
+
